@@ -15,18 +15,18 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Tanggal</th>
+                <th>Nama Kendaraan</th>
                 <th>KM Terakhir</th>
-                <th>KM Oli Gardan</th>
+                <th>Status Gardan</th>
             </tr>
         </thead>
         <tbody>
-            <?php if (!empty($logs)): ?>
-                <?php foreach ($logs as $log): ?>
+            <?php if (!empty($vehiclesForLog)): ?>
+                <?php foreach ($vehiclesForLog as $log): ?>
                 <tr>
-                    <td><?= htmlspecialchars($log['date']) ?></td>
+                    <td><?= htmlspecialchars($log['name']) ?></td>
                     <td><?= $log['last_km'] ?></td>
-                    <td><?= $log['last_gardan_km'] ? $log['last_gardan_km'] : '-' ?></td>
+                    <td><?= $log['status_gardan'] ? 'Sudah' : 'Belum' ?></td>
                 </tr>
                 <?php endforeach; ?>
             <?php else: ?>

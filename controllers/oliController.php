@@ -19,18 +19,11 @@ class oliController {
     public function list() {
         $userId = $_SESSION['user_id'];
         $model = new oliModel();
-        $vehicles = $model->getAllVehiclesByUser($userId);
-
-        $uniqueVehicles = [];
-        $uniqueNames = [];
-        foreach ($vehicles as $vehicle) {
-            if (!in_array($vehicle['name'], $uniqueNames)) {
-                $uniqueVehicles[] = $vehicle;
-                $uniqueNames[] = $vehicle['name'];
-            }
-        }
-
-        foreach ($uniqueVehicles as &$vehicle) {
+    
+        $vehiclesForList = $model->getVehiclesForList($userId);
+        $vehiclesForLog = $model->getVehiclesForLog($userId);
+    
+        foreach ($vehiclesForList as &$vehicle) {
             $vehicle['next_oli_km'] = $vehicle['last_km'] + $vehicle['interval_oli'];
             if ($vehicle['need_gardan']) {
                 $nextGardanKM = $vehicle['last_gardan_km'] + ($vehicle['interval_oli'] * $vehicle['gardan_ratio']);
@@ -39,9 +32,9 @@ class oliController {
                 $vehicle['gardan_status'] = 'Tidak';
             }
         }
-
+    
         require './views/list.php';
-    }
+    }    
 
     public function add() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -75,26 +68,24 @@ class oliController {
     public function updateKM() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'];
-
+    
             $model = new oliModel();
             $vehicle = $model->getVehicleById($id);
-
+    
             $newLastKM = $vehicle['last_km'] + $vehicle['interval_oli'];
-
+    
+            $model->updateOliKM($id, $newLastKM, 1);
+    
             if ($vehicle['need_gardan']) {
-                $nextGardanKM = $vehicle['last_gardan_km'] + ($vehicle['interval_oli'] * $vehicle['gardan_ratio']);
-                if ($nextGardanKM <= $newLastKM) {
-                    $newLastGardanKM = $newLastKM;
-                    $model->updateGardanKM($id, $newLastGardanKM);
-                }
+                $currentRatio = $vehicle['gardan_ratio'];
+                $statusGardan = ($vehicle['id'] % $currentRatio === 0) ? 1 : 0;
+                $model->updateGardanStatus($id, $statusGardan);
             }
-
-            $model->saveLog($id, $_SESSION['user_id'], $vehicle['last_km'], $vehicle['last_gardan_km']);
-            $model->updateOliKM($id, $newLastKM);
-
+    
             header('Location: index.php?controller=oliController&action=list');
         }
     }
+    
 
     public function viewLog() {
         $id = $_GET['id'];
