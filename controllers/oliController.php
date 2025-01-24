@@ -75,12 +75,12 @@ class oliController {
     public function updateKM() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'];
-    
+
             $model = new oliModel();
             $vehicle = $model->getVehicleById($id);
-    
+
             $newLastKM = $vehicle['last_km'] + $vehicle['interval_oli'];
-    
+
             if ($vehicle['need_gardan']) {
                 $nextGardanKM = $vehicle['last_gardan_km'] + ($vehicle['interval_oli'] * $vehicle['gardan_ratio']);
                 if ($nextGardanKM <= $newLastKM) {
@@ -88,21 +88,21 @@ class oliController {
                     $model->updateGardanKM($id, $newLastGardanKM);
                 }
             }
-    
+
             $model->saveLog($id, $_SESSION['user_id'], $vehicle['last_km'], $vehicle['last_gardan_km']);
             $model->updateOliKM($id, $newLastKM);
-    
+
             header('Location: index.php?controller=oliController&action=list');
         }
     }
+
     public function viewLog() {
         $id = $_GET['id'];
         $model = new oliModel();
         $logs = $model->getLogsByVehicleId($id);
         require './views/log.php';
     }
-    
-    
+
     public function editKM() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'];
