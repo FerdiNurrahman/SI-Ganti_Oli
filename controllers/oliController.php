@@ -16,37 +16,18 @@ class oliController {
         require './views/home.php';
     }
 
-    public function list() {
-        $userId = $_SESSION['user_id'];
-        $model = new oliModel();
     
-        $vehiclesForList = $model->getVehiclesForList($userId);
-        $vehiclesForLog = $model->getVehiclesForLog($userId);
-    
-        foreach ($vehiclesForList as &$vehicle) {
-            $vehicle['next_oli_km'] = $vehicle['last_km'] + $vehicle['interval_oli'];
-            if ($vehicle['need_gardan']) {
-                $nextGardanKM = $vehicle['last_gardan_km'] + ($vehicle['interval_oli'] * $vehicle['gardan_ratio']);
-                $vehicle['gardan_status'] = ($nextGardanKM <= $vehicle['last_km']) ? 'Ya' : 'Tidak';
-            } else {
-                $vehicle['gardan_status'] = 'Tidak';
-            }
-        }
-    
-        require './views/list.php';
-    }    
-
     public function add() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $needGardan = $_POST['need_gardan'];
             $gardanRatio = ($needGardan == 1) ? $_POST['gardan_ratio'] : null;
             $gardanNow = ($needGardan == 1) ? $_POST['gardan_now'] : null;
-    
+            
             $statusGardan = 0;
             if ($needGardan == 1 && $gardanNow == 1) {
                 $statusGardan = 1;
             }
-    
+            
             $data = [
                 'user_id' => $_SESSION['user_id'],
                 'name' => $_POST['name'],
@@ -57,7 +38,7 @@ class oliController {
                 'status_oli' => 0,
                 'status_gardan' => $statusGardan
             ];
-    
+            
             $model = new oliModel();
             $model->addVehicle($data);
             header('Location: index.php?controller=oliController&action=list');
@@ -66,7 +47,6 @@ class oliController {
         }
     }
     
-
     public function updateKM() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'];
@@ -74,16 +54,20 @@ class oliController {
             $vehicle = $model->getVehicleById($id);
     
             $newLastKM = $vehicle['last_km'] + $vehicle['interval_oli'];
-            $statusGardan = $vehicle['status_gardan'];
+            $model->updateOliKM($id, $vehicle['last_km'], 1); // Update status_oli menjadi 1 untuk data lama
     
-            $model->updateOliKM($id, $vehicle['last_km'], 1);
+            $userVehicles = $model->getVehiclesByUserAndName($vehicle['user_id'], $vehicle['name']);
+            $totalVehicles = count($userVehicles);
     
+            $gardanRatio = $vehicle['gardan_ratio'];
             $newStatusGardan = 0;
+    
             if ($vehicle['need_gardan']) {
-                $newStatusGardan = (($vehicle['id'] + 1) % $vehicle['gardan_ratio'] === 0) ? 1 : 0;
+                $newIndex = $totalVehicles % $gardanRatio;
+                $newStatusGardan = ($newIndex === 0) ? 1 : 0;
             }
     
-            $data = [
+            $newData = [
                 'user_id' => $vehicle['user_id'],
                 'name' => $vehicle['name'],
                 'interval_oli' => $vehicle['interval_oli'],
@@ -94,18 +78,30 @@ class oliController {
                 'status_gardan' => $newStatusGardan
             ];
     
-            $model->addVehicle($data);
+            $model->addVehicle($newData);
     
             header('Location: index.php?controller=oliController&action=list');
         }
     }
     
     
-
+    public function list() {
+        $userId = $_SESSION['user_id'];
+        $model = new oliModel();
+        $vehiclesForList = $model->getVehiclesForList($userId);
+    
+        foreach ($vehiclesForList as &$vehicle) {
+            $vehicle['next_oli_km'] = $vehicle['last_km'] + $vehicle['interval_oli'];
+            $vehicle['gardan_status_display'] = $vehicle['status_gardan'] ? 'Tidak Ganti' : 'Ganti';
+        }
+    
+        require './views/list.php';
+    }
+    
     public function viewLog() {
         $id = $_GET['id'];
         $model = new oliModel();
-        $logs = $model->getLogsByVehicleId($id);
+        $logs = $model->getVehiclesForLogByVehicleId($id);
         require './views/log.php';
     }
 
