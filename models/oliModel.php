@@ -38,6 +38,7 @@ class oliModel {
         $stmt = $this->db->prepare($query);
         $stmt->execute($data);
     }
+    
 
     public function updateOliKM($id, $newLastKM, $statusOli) {
         $query = "UPDATE vehicles SET last_km = :last_km, status_oli = :status_oli WHERE id = :id";

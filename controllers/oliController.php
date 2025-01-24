@@ -41,12 +41,12 @@ class oliController {
             $needGardan = $_POST['need_gardan'];
             $gardanRatio = ($needGardan == 1) ? $_POST['gardan_ratio'] : null;
             $gardanNow = ($needGardan == 1) ? $_POST['gardan_now'] : null;
-
-            $lastGardanKM = null;
+    
+            $statusGardan = 0;
             if ($needGardan == 1 && $gardanNow == 1) {
-                $lastGardanKM = $_POST['last_km'];
+                $statusGardan = 1;
             }
-
+    
             $data = [
                 'user_id' => $_SESSION['user_id'],
                 'name' => $_POST['name'],
@@ -54,9 +54,10 @@ class oliController {
                 'need_gardan' => $needGardan,
                 'gardan_ratio' => $gardanRatio,
                 'last_km' => $_POST['last_km'],
-                'last_gardan_km' => $lastGardanKM
+                'status_oli' => 0,
+                'status_gardan' => $statusGardan
             ];
-
+    
             $model = new oliModel();
             $model->addVehicle($data);
             header('Location: index.php?controller=oliController&action=list');
@@ -64,6 +65,7 @@ class oliController {
             require './views/add.php';
         }
     }
+    
 
     public function updateKM() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
