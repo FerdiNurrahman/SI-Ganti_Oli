@@ -92,6 +92,12 @@ class oliModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
+    public function deleteVehicle($id) {
+        $query = "DELETE FROM vehicles WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+    }
     
 }
 ?>

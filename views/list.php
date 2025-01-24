@@ -5,6 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Kendaraan</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: 'Data yang dihapus tidak bisa dikembalikan!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`deleteForm-${id}`).submit();
+            }
+        });
+    }
+
+    function confirmLogout() {
+        Swal.fire({
+            title: 'Yakin ingin logout?',
+            text: 'Anda harus login kembali untuk mengakses data!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Logout!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'index.php?controller=authController&action=logout';
+            }
+        });
+    }
+</script>
+
 </head>
 <body>
 <header>
@@ -12,7 +49,7 @@
 </header>
 <div class="container">
     <div class="action-buttons">
-        <a href="index.php?controller=authController&action=logout" class="btn">Logout</a>
+        <button class="btn" onclick="confirmLogout()">Logout</button>
         <a class="btn" href="index.php?controller=oliController&action=add">Tambah Kendaraan</a>
     </div>
     <table class="table">
@@ -44,6 +81,10 @@
                                 <input type="hidden" name="id" value="<?= $vehicle['id'] ?>">
                                 <button type="submit" class="btn">Edit KM</button>
                             </form>
+                                <form id="deleteForm-<?= $vehicle['id'] ?>" method="POST" action="index.php?controller=oliController&action=delete" style="display: inline;">
+                                    <input type="hidden" name="id" value="<?= $vehicle['id'] ?>">
+                                    <button type="button" class="btn btn-danger" onclick="confirmDelete(<?= $vehicle['id'] ?>)">Hapus</button>
+                                </form>
                         </td>
                     </tr>
                 <?php endforeach; ?>

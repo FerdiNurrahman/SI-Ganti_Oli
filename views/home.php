@@ -13,7 +13,6 @@
 <div class="container">
     <a class="btn" href="index.php?controller=oliController&action=list">Lihat Kendaraan</a>
     <a class="btn" href="index.php?controller=oliController&action=add">Tambah Kendaraan</a>
-    <a class="btn" href="index.php?controller=authController&action=logout">Logout</a>
 </div>
 </body>
 </html>

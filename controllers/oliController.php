@@ -121,5 +121,14 @@ class oliController {
             require './views/edit.php';
         }
     }
+
+    public function delete() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'];
+            $model = new oliModel();
+            $model->deleteVehicle($id);
+            header('Location: index.php?controller=oliController&action=list');
+        }
+    }
 }
 ?>
