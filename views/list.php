@@ -11,6 +11,7 @@
     <h1>Daftar Kendaraan</h1>
 </header>
 <div class="container">
+    <a href="index.php?controller=authController&action=logout" class="btn">Logout</a>
     <a class="btn" href="index.php?controller=oliController&action=add">Tambah Kendaraan</a>
     <table class="table">
         <thead>
@@ -32,6 +33,7 @@
                         <input type="hidden" name="id" value="<?= $vehicle['id'] ?>">
                         <button type="submit" class="btn">Sudah Ganti Oli</button>
                     </form>
+                    <a class="btn" href="index.php?controller=oliController&action=viewLog&id=<?= $vehicle['id'] ?>">Lihat Log</a>
                     <form method="GET" action="index.php" style="display: inline;">
                         <input type="hidden" name="controller" value="oliController">
                         <input type="hidden" name="action" value="editKM">

@@ -10,7 +10,6 @@
 <header>
     <h1>Selamat Datang di Aplikasi Ganti Oli</h1>
 </header>
-<a href="index.php?controller=authController&action=logout" class="btn">Logout</a>
 <div class="container">
     <a class="btn" href="index.php?controller=oliController&action=list">Lihat Kendaraan</a>
     <a class="btn" href="index.php?controller=oliController&action=add">Tambah Kendaraan</a>

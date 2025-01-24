@@ -46,5 +46,26 @@ class oliModel {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function saveLog($vehicleId, $userId, $lastKM, $lastGardanKM) {
+        $query = "INSERT INTO vehicle_log (vehicle_id, user_id, last_km, last_gardan_km)
+                  VALUES (:vehicle_id, :user_id, :last_km, :last_gardan_km)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':vehicle_id', $vehicleId, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindParam(':last_km', $lastKM, PDO::PARAM_INT);
+        $stmt->bindParam(':last_gardan_km', $lastGardanKM, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+   
+    public function getLogsByVehicleId($vehicleId) {
+        $query = "SELECT * FROM vehicle_log WHERE vehicle_id = :vehicle_id ORDER BY date DESC";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':vehicle_id', $vehicleId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+
 }
 ?>
