@@ -92,7 +92,7 @@ class oliController {
     
         foreach ($vehiclesForList as &$vehicle) {
             $vehicle['next_oli_km'] = $vehicle['last_km'] + $vehicle['interval_oli'];
-            $vehicle['gardan_status_display'] = $vehicle['status_gardan'] ? 'Tidak Ganti' : 'Ganti';
+            $vehicle['gardan_status_display'] = $vehicle['status_gardan'] ? 'Saatnya Ganti' : 'Belum Saatnya';
         }
     
         require './views/list.php';
