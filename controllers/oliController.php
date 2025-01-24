@@ -70,23 +70,36 @@ class oliController {
     public function updateKM() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'];
-    
             $model = new oliModel();
             $vehicle = $model->getVehicleById($id);
     
             $newLastKM = $vehicle['last_km'] + $vehicle['interval_oli'];
+            $statusGardan = $vehicle['status_gardan'];
     
-            $model->updateOliKM($id, $newLastKM, 1);
+            $model->updateOliKM($id, $vehicle['last_km'], 1);
     
+            $newStatusGardan = 0;
             if ($vehicle['need_gardan']) {
-                $currentRatio = $vehicle['gardan_ratio'];
-                $statusGardan = ($vehicle['id'] % $currentRatio === 0) ? 1 : 0;
-                $model->updateGardanStatus($id, $statusGardan);
+                $newStatusGardan = (($vehicle['id'] + 1) % $vehicle['gardan_ratio'] === 0) ? 1 : 0;
             }
+    
+            $data = [
+                'user_id' => $vehicle['user_id'],
+                'name' => $vehicle['name'],
+                'interval_oli' => $vehicle['interval_oli'],
+                'need_gardan' => $vehicle['need_gardan'],
+                'gardan_ratio' => $vehicle['gardan_ratio'],
+                'last_km' => $newLastKM,
+                'status_oli' => 0,
+                'status_gardan' => $newStatusGardan
+            ];
+    
+            $model->addVehicle($data);
     
             header('Location: index.php?controller=oliController&action=list');
         }
     }
+    
     
 
     public function viewLog() {

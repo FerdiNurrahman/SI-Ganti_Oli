@@ -37,17 +37,16 @@ class oliModel {
                   VALUES (:user_id, :name, :interval_oli, :need_gardan, :gardan_ratio, :last_km, :status_oli, :status_gardan)";
         $stmt = $this->db->prepare($query);
         $stmt->execute($data);
-    }
-    
-
-    public function updateOliKM($id, $newLastKM, $statusOli) {
+    }    
+    public function updateOliKM($id, $lastKM, $statusOli) {
         $query = "UPDATE vehicles SET last_km = :last_km, status_oli = :status_oli WHERE id = :id";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':last_km', $newLastKM, PDO::PARAM_INT);
+        $stmt->bindParam(':last_km', $lastKM, PDO::PARAM_INT);
         $stmt->bindParam(':status_oli', $statusOli, PDO::PARAM_INT);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
     }
+    
 
     public function updateGardanStatus($id, $statusGardan) {
         $query = "UPDATE vehicles SET status_gardan = :status_gardan WHERE id = :id";

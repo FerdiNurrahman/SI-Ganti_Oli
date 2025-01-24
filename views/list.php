@@ -28,8 +28,8 @@
     <tr>
         <td><?= htmlspecialchars($vehicle['name']) ?></td>
         <td><?= $vehicle['last_km'] ?></td>
-        <td><?= $vehicle['next_oli_km'] ?></td>
-        <td><?= $vehicle['gardan_status'] ?></td>
+        <td><?= $vehicle['last_km'] + $vehicle['interval_oli'] ?></td>
+        <td><?= $vehicle['status_gardan'] ? 'Sudah' : 'Belum' ?></td>
         <td>
             <form method="POST" action="index.php?controller=oliController&action=updateKM" style="display: inline;">
                 <input type="hidden" name="id" value="<?= $vehicle['id'] ?>">
